@@ -53,10 +53,14 @@ class RemoveTaskCommand(Command):
         self.removed_task = None
 
     def execute(self):
-        self.removed_task = self.todo_list.remove_task(self.index)
-
+        if 0 <= self.index < len(self.todo_list.tasks):
+            self.removed_task = self.todo_list.remove_task(self.index)
+        else:
+            print("Index tidak valid")
+            
     def undo(self):
-        self.todo_list.tasks.insert(self.index, self.removed_task)
+        if self.removed_task:
+            self.todo_list.tasks.insert(self.index, self.removed_task)
 
 
 class MarkAsDoneCommand(Command):
@@ -65,10 +69,14 @@ class MarkAsDoneCommand(Command):
         self.index = index
 
     def execute(self):
-        self.todo_list.mark_as_done(self.index)
+        if 0 <= self.index < len(self.todo_list.tasks):
+            self.todo_list.mark_as_done(self.index)
+        else:
+            print("index tidak valid")
 
     def undo(self):
-        self.todo_list.mark_as_undone(self.index)
+        if 0 <= self.index < len(self.todo_list.tasks):
+            self.todo_list.mark_as_undone(self.index)
 
 
 class CommandManager:
@@ -100,28 +108,82 @@ class CommandManager:
 
 # ========== DEMONSTRASI ==========
 
-todo_list = TodoList()
-manager = CommandManager()
+# todo_list = TodoList()
+# manager = CommandManager()
 
-user_task1 = input("Masukkan Tugas pertama: ")
-cmd1 = AddTaskCommand(todo_list, user_task1)
-manager.execute_command(cmd1)
+# user_task1 = input("Masukkan Tugas pertama: ")
+# cmd1 = AddTaskCommand(todo_list, user_task1)
+# manager.execute_command(cmd1)
 
-user_task2 = input("Masukkan Tugas kedua: ")
-cmd2 = AddTaskCommand(todo_list, user_task2)
-manager.execute_command(cmd2)
+# user_task2 = input("Masukkan Tugas kedua: ")
+# cmd2 = AddTaskCommand(todo_list, user_task2)
+# manager.execute_command(cmd2)
 
-cmd3 = MarkAsDoneCommand(todo_list, 0)
-manager.execute_command(cmd3)
+# cmd3 = MarkAsDoneCommand(todo_list, 0)
+# manager.execute_command(cmd3)
 
-print("\nSetelah menambahkan dan menandai selesai:")
-todo_list.show_tasks()
+# print("\nSetelah menambahkan dan menandai selesai:")
+# todo_list.show_tasks()
 
-print("\nUndo dua langkah:")
-manager.undo()
-manager.undo()
-todo_list.show_tasks()
+# print("\nUndo dua langkah:")
+# manager.undo()
+# manager.undo()
+# todo_list.show_tasks()
 
-print("\nRedo satu langkah:")
-manager.redo()
-todo_list.show_tasks()
+# print("\nRedo satu langkah:")
+# manager.redo()
+# todo_list.show_tasks()
+
+
+def main():
+    todo_list = TodoList()
+    manager = CommandManager()
+    
+    while True:
+        print("===========================")
+        print("Todo List Program :")
+        print("1. Add task")
+        print("2. Remove task")
+        print("3. Mark task as done")
+        print("4. Undo")
+        print("5. Redo")
+        print("6. Show tasks")
+        print("7. Exit")
+        print("===========================")
+        
+        input_choice = input("Pilih Menu : ")
+        
+        if input_choice == "1":
+            task_adding = input("Masukkan Tugas : ")
+            cmd = AddTaskCommand(todo_list, task_adding)
+            manager.execute_command(cmd)
+        elif input_choice == "2":
+            todo_list.show_tasks()
+            try:
+                idx = int(input("Masukkan Index Tugas yang ingin dihapus :"))
+                cmd = RemoveTaskCommand(todo_list, idx)
+                manager.execute_command(cmd)
+            except ValueError:
+                print("Indeks tidak valid")
+        elif input_choice == "3":
+            todo_list.show_tasks()
+            try:
+                idx = int(input("Masukkan Index Tugas yang ingin ditandai selesai : "))
+                cmd = MarkAsDoneCommand(todo_list, idx)
+                manager.execute_command(cmd)
+            except ValueError:
+                print("Indeks tidak valid")
+        elif input_choice == "4":
+            manager.undo()
+        elif input_choice == "5":
+            manager.redo()
+        elif input_choice == "6":
+            todo_list.show_tasks()
+        elif input_choice == "7":
+            print("Terima Kasih ^_^")
+            break
+        else:
+            print("Pilihan tidak valid, silahkan running ulang program")
+            
+if __name__ == "__main__":
+    main()
