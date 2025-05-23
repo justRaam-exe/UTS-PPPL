@@ -1,16 +1,19 @@
 import java.util.ArrayList;
 import java.util.List;
 
+// observer interface
 interface Observer {
     void update(float temperature);
 }
 
+// subject interface
 interface Subject {
     void addObserver(Observer o);
     void removeObserver(Observer o);
     void notifyObservers();
 }
 
+// TemperatureSensor sebagai Subject
 class TemperatureSensor implements Subject {
     private List<Observer> observers;
     private float temperature;
@@ -42,6 +45,7 @@ class TemperatureSensor implements Subject {
     }
 }
 
+// observer 1 - show current temperature
 class CurrentConditionDisplay implements Observer {
     @Override
     public void update(float temperature) {
@@ -49,6 +53,7 @@ class CurrentConditionDisplay implements Observer {
     }
 }
 
+// observer 2 - show temperature statistics
 class StatisticsDisplay implements Observer {
     private float maxTemp = Float.MIN_VALUE;
     private float minTemp = Float.MAX_VALUE;
@@ -68,7 +73,8 @@ class StatisticsDisplay implements Observer {
     }
 }
 
-public class Main {
+// main program
+public class TempSensorProgram {
     public static void main(String[] args) {
         TemperatureSensor sensor = new TemperatureSensor();
 
